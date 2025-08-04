@@ -27,6 +27,7 @@
     "inv_updates.loaders.CloneCommandMixin",
     "inv_updates.loaders.EntityMixin",
     "inv_updates.loaders.FallingBlockEntityMixin",
+    "tooltip.InventoryS2CPacketAccessor",
     "tooltip.InventoryS2CPacketMixin",
     "tooltip.ItemStackMixin",
     "tooltip.ScreenHandlerMixin",
