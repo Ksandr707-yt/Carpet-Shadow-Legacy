@@ -2,6 +2,8 @@ package com.ksandr707.carpet_shadow_legacy.mixins.inv_updates.loaders;
 
 
 import com.ksandr707.carpet_shadow_legacy.Globals;
+import com.ksandr707.carpet_shadow_legacy.newAPI.ShadowComponent;
+import com.ksandr707.carpet_shadow_legacy.newAPI.ShadowNBTData;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.inventory.Inventory;
