@@ -1,10 +1,10 @@
 package com.ksandr707.carpet_shadow_legacy.newAPI;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.component.ComponentsAccess;
 import net.minecraft.item.Item;
 import net.minecraft.item.tooltip.TooltipAppender;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.text.MutableText;
@@ -43,13 +43,13 @@ public record ShadowComponent(String shadowId) implements TooltipAppender {
         return shadowId!=null && !shadowId.isEmpty() && shadowId.matches("\\S+?");
     }
 
-    @Override
-    public void appendTooltip(Item.TooltipContext context, Consumer<Text> tooltip, TooltipType type) {
-        if (shouldShowTooltip()) tooltip.accept(getTooltip());
+    static {
+        CODEC = TextCodecs.CODEC.fieldOf("shadow_id").xmap(ShadowComponent::new, ShadowComponent::getTextShadowId).codec();
+        PACKET_CODEC = TextCodecs.REGISTRY_PACKET_CODEC.xmap(ShadowComponent::new, ShadowComponent::getTextShadowId);
     }
 
-    static {
-        CODEC = TextCodecs.STRINGIFIED_CODEC.fieldOf("shadow_id").xmap(ShadowComponent::new, ShadowComponent::getTextShadowId).codec();
-        PACKET_CODEC = TextCodecs.REGISTRY_PACKET_CODEC.xmap(ShadowComponent::new, ShadowComponent::getTextShadowId);
+    @Override
+    public void appendTooltip(Item.TooltipContext context, Consumer<Text> tooltip, TooltipType type, ComponentsAccess components) {
+        if (shouldShowTooltip()) tooltip.accept(getTooltip());
     }
 }
