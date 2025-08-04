@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "id": "carpet-shadow-legacy",
+  "version": "${version}",
+  "name": "Carpet Shadow Legacy",
+  "description": "Carpet Addon for Bringing Back Item Shadowing in Modern Minecraft Versions.",
+  "authors": [
+    {
+      "name": "Ksandr707",
+      "comment": "Current Developer",
+      "contact": {
+        "discord": "ksandr707",
+        "telegram": "https://t.me/Ksandr707"
+      }
+    },
+    {
+      "name": "Mattymatty",
+      "comment": "Original Carpet Shadow Mod Developer",
+      "contact": {
+        "discord": "mattymatty"
+      }
+    },
+    {
+      "name": "Kochkaev",
+      "comment": "1.21 initial port developer",
+      "contact": {
+        "telegram": "https://t.me/kleverdi"
+      }
+    }
+  ],
+  "contact": {
+    "homepage": "https://github.com/Ksandr707-yt/Carpet-Shadow-Legacy",
+    "issues": "https://github.com/Ksandr707-yt/Carpet-Shadow-Legacy/issues"
+  },
+  "contributors": [
+    {
+      "name": "adammakesfilm",
+      "comment": "Icon author",
+      "contact": {
+        "discord": "adammakesfilm"
+      }
+    }
+  ],
+  "license": "MIT",
+  "icon": "assets/carpet-shadow-legacy/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.ksandr707.carpet_shadow_legacy.CarpetShadowLegacy"
+    ]
+  },
+  "mixins": [
+    "carpet-shadow-legacy.mixins.json"
+  ],
+  "depends": {
+    "carpet": ">=1.4.147",
+    "minecraft": ">=1.21"
+  },
+  "custom": {
+    "lithium:options": {
+      "mixin.block": false
+    }
+  }
+}
