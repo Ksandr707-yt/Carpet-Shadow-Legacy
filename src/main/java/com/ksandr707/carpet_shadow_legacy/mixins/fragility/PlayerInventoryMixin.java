@@ -1,8 +1,6 @@
 package com.ksandr707.carpet_shadow_legacy.mixins.fragility;
 
-import com.ksandr707.carpet_shadow_legacy.CarpetShadowLegacy;
 import com.ksandr707.carpet_shadow_legacy.CarpetShadowLegacySettings;
-import com.ksandr707.carpet_shadow_legacy.Globals;
 import com.ksandr707.carpet_shadow_legacy.interfaces.ItemEntitySlot;
 import com.ksandr707.carpet_shadow_legacy.interfaces.ShadowItem;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -32,17 +30,6 @@ public abstract class PlayerInventoryMixin {
                 instance.setCount(0);
         }else{
             original.call(instance, count);
-        }
-        if (CarpetShadowLegacySettings.shadowItemUpdateFix &&
-                ((ShadowItem) (Object) this).carpet_shadow$isItShadowItem()) {
-            String shadowId = ((ShadowItem) (Object) this).carpet_shadow$getShadowId();
-            var cache = CarpetShadowLegacy.shadowMap.get(shadowId);
-
-            if (cache != null) {
-                for (var entry : cache.getRight()) {
-                    Globals.markInventoryDirty(entry.getLeft());
-                }
-            }
         }
     }
 
