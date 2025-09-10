@@ -1,6 +1,5 @@
 package com.ksandr707.carpet_shadow_legacy.mixins.inv_updates.loaders;
 
-
 import com.ksandr707.carpet_shadow_legacy.Globals;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -17,6 +16,4 @@ public abstract class CloneCommandMixin {
     private static void interceptBlockEntityLoad(BlockEntity instance, NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup){
         Globals.updateInventory(instance);
     }
-
-
 }

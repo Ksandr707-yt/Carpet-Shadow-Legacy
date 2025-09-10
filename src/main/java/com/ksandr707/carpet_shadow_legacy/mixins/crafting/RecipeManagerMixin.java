@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings({"unchecked","rawtypes"})
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
     @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/util/profiler/Profiler;)V", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap;builder()Lcom/google/common/collect/ImmutableMap$Builder;", shift = At.Shift.BY, by=2))
@@ -76,7 +75,7 @@ public class RecipeManagerMixin {
                 if (item==null || enderchest==null)
                     return ItemStack.EMPTY;
 
-                String id = ((ShadowItem)(Object)item).carpet_shadow$getShadowId();
+                String id = ((ShadowItem)(Object)item).getShadowId();
                 if (id == null){
                     id = CarpetShadowLegacy.shadow_id_generator.nextString();
                 }
@@ -112,7 +111,7 @@ public class RecipeManagerMixin {
                 return width * height >= 2;
             }
         };
-        RecipeEntry<?> recipeEntry = new RecipeEntry(identifier, recipe);
+        RecipeEntry<?> recipeEntry = new RecipeEntry<>(identifier, recipe);
         builder.put(recipe.getType(), recipeEntry);
         builder2.put(identifier, recipeEntry);
     }

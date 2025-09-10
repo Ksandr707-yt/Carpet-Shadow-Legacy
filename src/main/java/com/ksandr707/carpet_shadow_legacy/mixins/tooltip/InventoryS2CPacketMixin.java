@@ -17,7 +17,7 @@ public abstract class InventoryS2CPacketMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;copy()Lnet/minecraft/item/ItemStack;"))
     public ItemStack copy_redirect(ItemStack instance, Operation<ItemStack> original) {
         if (CarpetShadowLegacySettings.shadowItemTooltip) {
-            return ShadowItem.carpet_shadow$copy_redirect(instance, original);
+            return ShadowItem.copy_redirect(instance, original);
         }
         return original.call(instance);
     }

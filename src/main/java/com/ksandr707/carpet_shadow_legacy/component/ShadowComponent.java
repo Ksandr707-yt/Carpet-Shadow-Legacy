@@ -1,10 +1,9 @@
-package com.ksandr707.carpet_shadow_legacy.newAPI;
+package com.ksandr707.carpet_shadow_legacy.component;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.item.Item;
 import net.minecraft.item.tooltip.TooltipAppender;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.text.MutableText;
@@ -35,7 +34,7 @@ public record ShadowComponent(String shadowId) implements TooltipAppender {
         MutableText sub = Text.literal(shadowId);
         sub.formatted(Formatting.GOLD, Formatting.BOLD);
         text.append(sub);
-        text.formatted(Formatting.DARK_PURPLE, Formatting.ITALIC);
+        text.formatted(Formatting.DARK_GRAY, Formatting.ITALIC);
         return text;
     }
 

@@ -5,7 +5,7 @@ import carpet.CarpetServer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.ksandr707.carpet_shadow_legacy.newAPI.ShadowNBTData;
+import com.ksandr707.carpet_shadow_legacy.component.ShadowNBTData;
 import com.ksandr707.carpet_shadow_legacy.utility.RandomString;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
@@ -13,7 +13,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Pair;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -29,14 +28,12 @@ import java.util.Map;
 
 public class CarpetShadowLegacy implements CarpetExtension, ModInitializer {
     public static final Map<String, Pair<ItemStack, List<Pair<Inventory, Integer>>>> shadowMap = new HashMap<>();
-    public static final Logger LOGGER = LogManager.getLogger("carpet-shadow");
+    public static final Logger LOGGER = LogManager.getLogger("Carpet-Shadow-Legacy");
     public static RandomString shadow_id_generator = new RandomString(CarpetShadowLegacySettings.shadowItemIdSize);
-
-
 
     @Override
     public void onGameStarted() {
-        CarpetShadowLegacy.LOGGER.info("Carpet Shadow Loaded!");
+        CarpetShadowLegacy.LOGGER.info("Carpet Shadow Legacy Loaded!");
         CarpetServer.settingsManager.parseSettingsClass(CarpetShadowLegacySettings.class);
         shadow_id_generator = new RandomString(CarpetShadowLegacySettings.shadowItemIdSize);
     }
@@ -53,7 +50,6 @@ public class CarpetShadowLegacy implements CarpetExtension, ModInitializer {
             });
             ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
                 PlayerEntity player = handler.player;
-
                 Globals.updateInventory(player.getInventory());
                 Globals.updateInventory(player.getEnderChestInventory());
             });
@@ -61,14 +57,6 @@ public class CarpetShadowLegacy implements CarpetExtension, ModInitializer {
                 Globals.removeInventory(handler.player.getInventory());
                 Globals.removeInventory(handler.player.getEnderChestInventory());
             });
-    }
-
-    @Override
-    public void onServerLoaded(MinecraftServer server) {
-    }
-
-    @Override
-    public void onTick(MinecraftServer server) {
     }
 
     @Override

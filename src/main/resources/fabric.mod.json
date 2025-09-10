@@ -7,24 +7,21 @@
   "authors": [
     {
       "name": "Ksandr707",
-      "comment": "Current Developer",
       "contact": {
         "discord": "ksandr707",
         "telegram": "https://t.me/Ksandr707"
       }
     },
     {
-      "name": "Mattymatty",
-      "comment": "Original Carpet Shadow Mod Developer",
+      "name": "Kochkaev",
       "contact": {
-        "discord": "mattymatty"
+        "telegram": "https://t.me/kleverdi"
       }
     },
     {
-      "name": "Kochkaev",
-      "comment": "1.21 initial port developer",
+      "name": "Mattymatty",
       "contact": {
-        "telegram": "https://t.me/kleverdi"
+        "discord": "mattymatty"
       }
     }
   ],
@@ -35,7 +32,6 @@
   "contributors": [
     {
       "name": "adammakesfilm",
-      "comment": "Icon author",
       "contact": {
         "discord": "adammakesfilm"
       }
@@ -54,7 +50,8 @@
   ],
   "depends": {
     "carpet": ">=1.4.147",
-    "minecraft": ">=1.21"
+    "minecraft": ">=1.21",
+    "fabric-api": ">=0.16.4"
   },
   "custom": {
     "lithium:options": {

@@ -21,7 +21,7 @@ public abstract class ItemEntityMixin {
 
     @WrapOperation(method = "merge(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;I)Lnet/minecraft/item/ItemStack;", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;copyWithCount(I)Lnet/minecraft/item/ItemStack;"))
     private static ItemStack redirect_copy(ItemStack stack, int count, Operation<ItemStack> original) {
-        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) stack).carpet_shadow$isItShadowItem()) {
+        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) stack).isItShadowItem()) {
             return stack;
         }
         return original.call(stack, count);
@@ -37,13 +37,13 @@ public abstract class ItemEntityMixin {
 
     @Inject(method = "onPlayerCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ItemEntity;getStack()Lnet/minecraft/item/ItemStack;", shift = At.Shift.BY, by = 2))
     public void setEntityForStack(PlayerEntity player, CallbackInfo ci, @Local(ordinal = 0) ItemStack stack) {
-        ((ItemEntitySlot) (Object) stack).carpet_shadow$setEntity((ItemEntity)(Object)this);
+        ((ItemEntitySlot) (Object) stack).setEntity((ItemEntity)(Object)this);
     }
 
     @Inject(method = "onPlayerCollision", at = @At(value = "RETURN"))
     public void resetEntityForStack(PlayerEntity player, CallbackInfo ci) {
         final var itemStack = ((ItemEntity)(Object)this).getStack();
-        ((ItemEntitySlot) (Object) itemStack).carpet_shadow$setEntity(null);
+        ((ItemEntitySlot) (Object) itemStack).setEntity(null);
     }
 
     @Inject(method = "onPlayerCollision", at = @At("HEAD"))

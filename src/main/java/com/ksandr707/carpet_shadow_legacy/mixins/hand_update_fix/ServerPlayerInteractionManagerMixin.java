@@ -11,7 +11,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,11 +22,9 @@ public abstract class ServerPlayerInteractionManagerMixin {
 
     @Shadow public abstract boolean isCreative();
 
-    @Shadow @Final protected ServerPlayerEntity player;
-
     @Inject(method = "interactBlock", at = @At(value = "RETURN",shift = At.Shift.BEFORE))
     private void inject_on_block_use(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir){
-        if(CarpetShadowLegacySettings.shadowItemUseFix && ((ShadowItem)(Object)stack).carpet_shadow$isItShadowItem() && !isCreative()) {
+        if(CarpetShadowLegacySettings.shadowItemUseFix && ((ShadowItem)(Object)stack).isItShadowItem() && !isCreative()) {
             ActionResult result = cir.getReturnValue();
             if (result==ActionResult.SUCCESS || result == ActionResult.CONSUME) {
                 int index = (hand == Hand.OFF_HAND) ? PlayerInventory.OFF_HAND_SLOT : player.getInventory().selectedSlot;

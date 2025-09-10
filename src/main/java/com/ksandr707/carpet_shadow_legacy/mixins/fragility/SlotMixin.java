@@ -20,7 +20,7 @@ public abstract class SlotMixin {
 
     @WrapOperation(method = "tryTakeStackRange", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;"))
     public ItemStack fixFragility_tryTakeStackRange(Slot instance, int amount, Operation<ItemStack> original) {
-        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) instance.getStack()).carpet_shadow$isItShadowItem() &&
+        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) instance.getStack()).isItShadowItem() &&
                 amount == instance.getStack().getCount()) {
             ItemStack ret = instance.getStack();
             instance.setStack(ItemStack.EMPTY);
@@ -32,7 +32,7 @@ public abstract class SlotMixin {
     @Inject(method = "insertStack(Lnet/minecraft/item/ItemStack;I)Lnet/minecraft/item/ItemStack;",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;split(I)Lnet/minecraft/item/ItemStack;"), cancellable = true)
     public void fixFragility_insertStack(ItemStack stack, int count, CallbackInfoReturnable<ItemStack> cir) {
-        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) stack).carpet_shadow$isItShadowItem() &&
+        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) stack).isItShadowItem() &&
                 count == stack.getCount()) {
             this.setStack(stack);
             cir.setReturnValue(ItemStack.EMPTY);

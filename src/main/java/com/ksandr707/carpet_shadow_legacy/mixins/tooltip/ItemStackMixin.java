@@ -1,9 +1,8 @@
 package com.ksandr707.carpet_shadow_legacy.mixins.tooltip;
 
-
 import com.ksandr707.carpet_shadow_legacy.CarpetShadowLegacySettings;
+import com.ksandr707.carpet_shadow_legacy.component.ShadowNBTData;
 import com.ksandr707.carpet_shadow_legacy.interfaces.ShadowItem;
-import com.ksandr707.carpet_shadow_legacy.newAPI.ShadowNBTData;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.item.ItemStack;
@@ -24,7 +23,7 @@ public abstract class ItemStackMixin {
     private List<Text> postToolTip(List<Text> original) {
         var list = new ArrayList<>(original);
         if (CarpetShadowLegacySettings.shadowItemTooltip) {
-            if (((ShadowItem) (Object) this).carpet_shadow$isItShadowItem())
+            if (((ShadowItem) this).isItShadowItem())
                 list.add(this.getComponents().get(ShadowNBTData.SHADOW).getTooltip());
         }
         return list;
@@ -32,8 +31,8 @@ public abstract class ItemStackMixin {
 
     @ModifyReturnValue(method = "copy", at =@At("RETURN"))
     private ItemStack removeTooltipInCopy(ItemStack original) {
-            if (((ShadowItem) (Object) this).carpet_shadow$isItShadowItem())
-                ((ShadowItem) (Object) original).carpet_shadow$removeShadow();
+            if (((ShadowItem) this).isItShadowItem())
+                ((ShadowItem) (Object) original).removeShadow();
         return original;
     }
 }

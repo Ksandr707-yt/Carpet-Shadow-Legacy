@@ -1,4 +1,4 @@
-package com.ksandr707.carpet_shadow_legacy.newAPI;
+package com.ksandr707.carpet_shadow_legacy.component;
 
 import net.minecraft.component.ComponentType;
 import net.minecraft.registry.Registries;

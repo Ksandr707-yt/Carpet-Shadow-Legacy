@@ -17,11 +17,10 @@ public abstract class DropperBlockMixin {
             from = @At(value = "INVOKE",target = "Lnet/minecraft/block/entity/HopperBlockEntity;transfer(Lnet/minecraft/inventory/Inventory;Lnet/minecraft/inventory/Inventory;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/math/Direction;)Lnet/minecraft/item/ItemStack;", shift = At.Shift.AFTER)
     ))
     ItemStack fix_dispense(ItemStack instance, Operation<ItemStack> original){
-        if(CarpetShadowLegacySettings.shadowItemTransferFragilityFix && ((ShadowItem)(Object)instance).carpet_shadow$isItShadowItem()){
+        if(CarpetShadowLegacySettings.shadowItemTransferFragilityFix && ((ShadowItem)(Object)instance).isItShadowItem()){
             return instance;
         }else{
             return original.call(instance);
         }
     }
-
 }

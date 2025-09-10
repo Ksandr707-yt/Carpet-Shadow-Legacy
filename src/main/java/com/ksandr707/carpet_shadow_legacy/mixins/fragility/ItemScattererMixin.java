@@ -22,7 +22,7 @@ public abstract class ItemScattererMixin {
 
     @WrapOperation(method = "spawn(Lnet/minecraft/world/World;DDDLnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE",target = "Lnet/minecraft/item/ItemStack;split(I)Lnet/minecraft/item/ItemStack;"))
     private static ItemStack modify_split(ItemStack stack, int amount, Operation<ItemStack> original, @Share("break") LocalBooleanRef quit){
-        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem)(Object)stack).carpet_shadow$isItShadowItem()){
+        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem)(Object)stack).isItShadowItem()){
             quit.set(true);
             return stack;
         }
