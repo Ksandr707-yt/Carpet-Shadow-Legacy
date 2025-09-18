@@ -16,6 +16,4 @@ public abstract class BlockStateArgumentMixin {
     public void interceptBlockEntityLoad(BlockEntity instance, NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup){
         Globals.updateInventory(instance);
     }
-
-
 }

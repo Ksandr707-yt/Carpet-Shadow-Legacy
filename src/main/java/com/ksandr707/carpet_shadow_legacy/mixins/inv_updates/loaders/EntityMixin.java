@@ -16,7 +16,7 @@ public abstract class EntityMixin {
         Entity entity = (Entity)(Object)this;
         if (entity instanceof Inventory) {
             entity.getWorld().getServer().execute(() -> {
-                Globals.updateInventory((Inventory) entity);
+                Globals.updateInventory(entity);
             });
         }
     }

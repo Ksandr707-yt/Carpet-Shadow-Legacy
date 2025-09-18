@@ -5,8 +5,7 @@ import com.ksandr707.carpet_shadow_legacy.CarpetShadowLegacySettings;
 import com.ksandr707.carpet_shadow_legacy.Globals;
 import com.ksandr707.carpet_shadow_legacy.interfaces.ShadowItem;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.recipe.*;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.input.CraftingRecipeInput;
@@ -21,6 +20,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedMap;
 
 @Mixin(ServerRecipeManager.class)
@@ -40,15 +41,15 @@ public abstract class RecipeManagerMixin {
             CallbackInfoReturnable<PreparedRecipes> cir,
             @Local SortedMap<Identifier, Recipe<?>> sortedMap
     ) {
-        Identifier identifier = Identifier.of("carpet_shadow", "shadow_recipe");
+        Identifier identifier = Identifier.of("carpet_shadow_legacy", "shadow_recipe");
         Recipe<?> recipe = new BookCloningRecipe(CraftingRecipeCategory.MISC) {
             @Override
             public boolean matches(CraftingRecipeInput inventory, World world) {
-                if (!CarpetShadowLegacySettings.shadowCraftingGeneration) return false;
-
+                if (!CarpetShadowLegacySettings.shadowCraftingGeneration)
+                    return false;
                 boolean enderchest = false;
+                List<ItemStack> stacks = new ArrayList<>();
                 int count = 0;
-
                 for (int i = 0; i < inventory.size(); ++i) {
                     ItemStack stack = inventory.getStackInSlot(i);
                     if (!stack.isEmpty()) {
@@ -62,14 +63,13 @@ public abstract class RecipeManagerMixin {
             }
 
             @Override
-            public ItemStack craft(CraftingRecipeInput inventory, RegistryWrapper.WrapperLookup registries) {
-                if (!CarpetShadowLegacySettings.shadowCraftingGeneration) {
+            public ItemStack craft(CraftingRecipeInput inventory, RegistryWrapper.WrapperLookup wrapperLookup) {
+                if (!CarpetShadowLegacySettings.shadowCraftingGeneration){
                     return ItemStack.EMPTY;
                 }
 
                 ItemStack item = null;
                 ItemStack enderchest = null;
-
                 for (int i = 0; i < inventory.size(); ++i) {
                     ItemStack stack = inventory.getStackInSlot(i);
                     if (!stack.isEmpty()) {
@@ -81,10 +81,9 @@ public abstract class RecipeManagerMixin {
                         }
                     }
                 }
-
                 if (item == null || enderchest == null) return ItemStack.EMPTY;
 
-                String id = ((ShadowItem) (Object) item).carpet_shadow$getShadowId();
+                String id = ((ShadowItem) (Object) item).getShadowId();
                 if (id == null) {
                     id = CarpetShadowLegacy.shadow_id_generator.nextString();
                 }
@@ -98,7 +97,6 @@ public abstract class RecipeManagerMixin {
 
                 ItemStack item = null;
                 ItemStack enderchest = null;
-
                 for (int i = 0; i < inventory.size(); ++i) {
                     ItemStack stack = inventory.getStackInSlot(i);
                     if (!stack.isEmpty()) {
@@ -108,17 +106,15 @@ public abstract class RecipeManagerMixin {
                         } else {
                             item = stack;
                         }
-                    }
                 }
 
-                if (item != null) {
+                if (item != null)
                     item.setCount(item.getCount() + 1);
+
                 }
                 return remainders;
             }
-
         };
-
         sortedMap.put(identifier, recipe);
     }
 }

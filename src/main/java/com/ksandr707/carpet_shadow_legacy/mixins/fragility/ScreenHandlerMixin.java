@@ -38,9 +38,9 @@ public abstract class ScreenHandlerMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;setCursorStack(Lnet/minecraft/item/ItemStack;)V", ordinal = 1)
     )
     public void remove_shadow_stack(ScreenHandler instance, ItemStack stack, Operation<Void> original) {
-        String shadowId1 = ((ShadowItem) (Object) getCursorStack()).carpet_shadow$getShadowId();
-        String shadowId2 = ((ShadowItem) (Object) stack).carpet_shadow$getShadowId();
-        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem)(Object)stack).carpet_shadow$isItShadowItem() && shadowId1.equals(shadowId2)) {
+        String shadowId1 = ((ShadowItem) (Object) getCursorStack()).getShadowId();
+        String shadowId2 = ((ShadowItem) (Object) stack).getShadowId();
+        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem)(Object)stack).isItShadowItem() && shadowId1.equals(shadowId2)) {
             instance.setCursorStack(ItemStack.EMPTY);
         } else {
             original.call(instance, stack);
@@ -55,15 +55,15 @@ public abstract class ScreenHandlerMixin {
         if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix) {
             Slot og = instance.slots.get(index);
             ItemStack og_item = og.getStack();
-            if (((ShadowItem) (Object) og_item).carpet_shadow$isItShadowItem()) {
+            if (((ShadowItem) (Object) og_item).isItShadowItem()) {
                 ItemStack mirror = og_item.copy();
-                ((ShadowItem) (Object) mirror).carpet_shadow$setShadowId(((ShadowItem) (Object) og_item).carpet_shadow$getShadowId());
+                ((ShadowItem) (Object) mirror).setShadowId(((ShadowItem) (Object) og_item).getShadowId());
                 og.setStack(mirror);
-                ((ShifingItem)(Object)mirror).carpet_shadow$setShiftMoving(true);
+                ((ShifingItem)(Object)mirror).setShiftMoving(true);
                 ItemStack ret = original.call(instance, player, index);
-                ((ShifingItem)(Object)mirror).carpet_shadow$setShiftMoving(false);
+                ((ShifingItem)(Object)mirror).setShiftMoving(false);
                 if (ret == ItemStack.EMPTY) {
-                    og_item = Globals.getByIdOrAdd(((ShadowItem) (Object) og_item).carpet_shadow$getShadowId(), og_item);
+                    og_item = Globals.getByIdOrAdd(((ShadowItem) (Object) og_item).getShadowId(), og_item);
                     og.setStack(og_item);
                     og_item.setCount(mirror.getCount());
                 }
@@ -78,8 +78,8 @@ public abstract class ScreenHandlerMixin {
     ),
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;split(I)Lnet/minecraft/item/ItemStack;", ordinal = 0))
     public ItemStack fix_shift(ItemStack instance, int amount, Operation<ItemStack> original) {
-        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) instance).carpet_shadow$isItShadowItem()) {
-            String shadow_id = ((ShadowItem) (Object) instance).carpet_shadow$getShadowId();
+        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) instance).isItShadowItem()) {
+            String shadow_id = ((ShadowItem) (Object) instance).getShadowId();
             ItemStack og_item = Globals.getByIdOrNull(shadow_id);
             if (og_item != null) {
                 og_item.setCount(instance.getCount());
@@ -93,7 +93,7 @@ public abstract class ScreenHandlerMixin {
     @WrapOperation(method = "insertItem",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z",ordinal = 0))
     public boolean fix_shift2(ItemStack instance, Operation<Boolean> original) {
-        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShifingItem) (Object) instance).carpet_shadow$isShiftMoving()) {
+        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShifingItem) (Object) instance).isShiftMoving()) {
             return true;
         }
         return original.call(instance);
@@ -108,12 +108,11 @@ public abstract class ScreenHandlerMixin {
     public boolean fixQuickCraft(Slot slot, ItemStack stack, boolean allowOverflow, Operation<Boolean> original) {
         if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix) {
             ItemStack slotStack = slot.getStack();
-            ItemStack ref1 = Globals.getByIdOrNull(((ShadowItem) (Object) slotStack).carpet_shadow$getShadowId());
-            ItemStack ref2 = Globals.getByIdOrNull(((ShadowItem) (Object) stack).carpet_shadow$getShadowId());
+            ItemStack ref1 = Globals.getByIdOrNull(((ShadowItem) (Object) slotStack).getShadowId());
+            ItemStack ref2 = Globals.getByIdOrNull(((ShadowItem) (Object) stack).getShadowId());
             if(slotStack == ref1 || stack == ref2)
                 return false;
         }
         return original.call(slot, stack, allowOverflow);
     }
-
 }
