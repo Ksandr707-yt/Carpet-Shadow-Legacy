@@ -23,19 +23,15 @@
     "inv_updates.SlotMixin",
     "inv_updates.loaders.BlockDataObjectMixin",
     "inv_updates.loaders.BlockEntityMixin",
+    "inv_updates.loaders.BlockItemMixin",
     "inv_updates.loaders.BlockStateArgumentMixin",
     "inv_updates.loaders.CloneCommandMixin",
     "inv_updates.loaders.EntityMixin",
     "inv_updates.loaders.FallingBlockEntityMixin",
-    "tooltip.InventoryS2CPacketAccessor",
     "tooltip.InventoryS2CPacketMixin",
     "tooltip.ItemStackMixin",
     "tooltip.ScreenHandlerMixin",
     "tooltip.ScreenHandlerSlotUpdateS2CPacketMixin"
-  ],
-  "client": [
-  ],
-  "server": [
   ],
   "injectors": {
     "defaultRequire": 1

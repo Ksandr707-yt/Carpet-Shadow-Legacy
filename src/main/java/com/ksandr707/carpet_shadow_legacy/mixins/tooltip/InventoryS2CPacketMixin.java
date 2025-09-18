@@ -34,8 +34,8 @@ public abstract class InventoryS2CPacketMixin {
             CallbackInfo ci
     ) {
         if (CarpetShadowLegacySettings.shadowItemTooltip) {
-            Operation<ItemStack> op = ignored -> new ItemStack(cursorStack.getItem());
-            this.cursorStack = ShadowItem.carpet_shadow$copy_redirect(cursorStack, op);
+            Operation<ItemStack> op = ignored -> new ItemStack(cursorStack.getItem(),cursorStack.getCount());
+            this.cursorStack = ShadowItem.copy_redirect(cursorStack, op);
         }
     }
 }

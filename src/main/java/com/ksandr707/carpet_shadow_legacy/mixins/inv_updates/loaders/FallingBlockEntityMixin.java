@@ -1,7 +1,5 @@
 package com.ksandr707.carpet_shadow_legacy.mixins.inv_updates.loaders;
 
-
-
 import com.ksandr707.carpet_shadow_legacy.Globals;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.FallingBlockEntity;
@@ -17,6 +15,4 @@ public abstract class FallingBlockEntityMixin {
     public void interceptBlockEntityLoad(BlockEntity instance, ReadView view){
         Globals.updateInventory(instance);
     }
-
-
 }

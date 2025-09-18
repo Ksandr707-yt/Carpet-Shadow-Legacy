@@ -1,5 +1,6 @@
 package com.ksandr707.carpet_shadow_legacy.mixins.general;
 
+import com.ksandr707.carpet_shadow_legacy.CarpetShadowLegacy;
 import com.ksandr707.carpet_shadow_legacy.interfaces.ShadowItem;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -13,7 +14,10 @@ public class LootTableMixin {
 
     @WrapOperation(method = "method_331", at=@At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;copyWithCount(I)Lnet/minecraft/item/ItemStack;"))
     private static ItemStack fix_survival_shulkers(ItemStack instance, int count, Operation<ItemStack> original){
-        if (((ShadowItem)(Object)instance).carpet_shadow$isItShadowItem()){
+        String shadowId = ((ShadowItem)(Object)instance).getShadowId();
+        CarpetShadowLegacy.LOGGER.info(shadowId);
+        CarpetShadowLegacy.LOGGER.info(instance);
+        if (shadowId != null){
             if (instance.getCount() == count){
                 return instance;
             }else if (count < instance.getMaxCount()) {

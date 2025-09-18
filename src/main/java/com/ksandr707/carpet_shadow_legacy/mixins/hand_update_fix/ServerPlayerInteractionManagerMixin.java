@@ -1,6 +1,5 @@
 package com.ksandr707.carpet_shadow_legacy.mixins.hand_update_fix;
 
-
 import com.ksandr707.carpet_shadow_legacy.CarpetShadowLegacySettings;
 import com.ksandr707.carpet_shadow_legacy.interfaces.ShadowItem;
 import net.minecraft.block.Blocks;
@@ -25,7 +24,7 @@ public abstract class ServerPlayerInteractionManagerMixin {
 
     @Inject(method = "interactBlock", at = @At(value = "RETURN",shift = At.Shift.BEFORE))
     private void inject_on_block_use(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir){
-        if(CarpetShadowLegacySettings.shadowItemUseFix && ((ShadowItem)(Object)stack).carpet_shadow$isItShadowItem() && !isCreative()) {
+        if(CarpetShadowLegacySettings.shadowItemUseFix && ((ShadowItem)(Object)stack).isItShadowItem() && !isCreative()) {
             ActionResult result = cir.getReturnValue();
             if (result==ActionResult.SUCCESS || result == ActionResult.CONSUME) {
                 int index = (hand == Hand.OFF_HAND) ? PlayerInventory.OFF_HAND_SLOT : player.getInventory().getSelectedSlot();

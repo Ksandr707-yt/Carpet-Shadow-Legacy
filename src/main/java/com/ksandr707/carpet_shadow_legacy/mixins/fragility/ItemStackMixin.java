@@ -23,12 +23,12 @@ public abstract class ItemStackMixin implements ItemEntitySlot, ShifingItem {
     private ItemEntity entity = null;
 
     @Override
-    public boolean carpet_shadow$isShiftMoving() {
+    public boolean isShiftMoving() {
         return shiftMoving;
     }
 
     @Override
-    public void carpet_shadow$setShiftMoving(boolean shiftMoving) {
+    public void setShiftMoving(boolean shiftMoving) {
         this.shiftMoving = shiftMoving;
     }
 
@@ -38,12 +38,12 @@ public abstract class ItemStackMixin implements ItemEntitySlot, ShifingItem {
     }
 
     @Override
-    public ItemEntity carpet_shadow$getEntity() {
+    public ItemEntity getEntity() {
         return entity;
     }
 
     @Override
-    public void carpet_shadow$setEntity(ItemEntity entity) {
+    public void setEntity(ItemEntity entity) {
         this.entity = entity;
     }
 
@@ -55,8 +55,8 @@ public abstract class ItemStackMixin implements ItemEntitySlot, ShifingItem {
     @ModifyReturnValue(method = "areEqual", at = @At("RETURN"))
     private static boolean check_Equal(boolean original, ItemStack left, ItemStack right) {
         if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && original) {
-            String shadow1 = ((ShadowItem) (Object) left).carpet_shadow$getShadowId();
-            String shadow2 = ((ShadowItem) (Object) right).carpet_shadow$getShadowId();
+            String shadow1 = ((ShadowItem) (Object) left).getShadowId();
+            String shadow2 = ((ShadowItem) (Object) right).getShadowId();
             if (!Objects.equals(shadow1, shadow2)) {
                 return false;
             }

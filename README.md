@@ -1,4 +1,5 @@
 # Carpet Shadow Legacy
+
 ## ENG
 
 Carpet Addon for bringing back Item Shadowing in modern Minecraft versions.
@@ -16,37 +17,6 @@ Carpet-Аддон для возвращаения механики Линков�
 **Для версий Майнкрафта ниже 1.21, пожалуйста, используйте оригинальный [Carpet-Shadow](https://github.com/mattymatty97/carpet-shadow). Я не оказываю помощь с Carpet-Shadow.**
 
 # Settings/Параметры
-## RU
-
-- **shadowItemTooltip**
-
-  Отображение уникального идентификатора Шедоу-Стака при наведении мыши на стак.
-
-- **shadowItemFragilityFixes**
-
-  Различные исправления, предотвращающие дюпы/разлинковки Шедоу-Стаков.
-
-- **shadowItemUpdateFix**
-
-  Обновление Шедоу-Стаков будет также обновлять другие стаки, даже если они находятся в других инвенатрях.
-
-- **shadowItemPreventCombine**
-
-  Предотвращает возможные совмещения Шедоу-Стаков между собой.
-
-  *Работает только если активен **shadowItemFragilityFixes**.*
-
-- **shadowItemIdSize**
-
-  Изменяет длинну уникального идентификатора Шедоу-Стаков.
-
-- **shadowItemUseFix**
-
-  Предотвращает различные ошибки, связанные с использованием Шедоу-Стаков.
-
-- **shadowCraftingGeneration**
-
-  Добавляет возможность создания Шедоу-Стаков внутри сетки крафта с помощью эндер-сундуков.
 
 ## ENG
 
@@ -80,15 +50,50 @@ Carpet-Аддон для возвращаения механики Линков�
 
   Adds craft of a Shadow-Stack in crafting grid with ender-chest.
 
+## RU
+
+- **shadowItemTooltip**
+
+  Отображение уникального идентификатора Шедоу-Стака при наведении мыши на стак.
+
+- **shadowItemFragilityFixes**
+
+  Различные исправления, предотвращающие дюпы/разлинковки Шедоу-Стаков.
+
+- **shadowItemUpdateFix**
+
+  Обновление Шедоу-Стаков будет также обновлять другие стаки, даже если они находятся в других инвенатрях.
+
+- **shadowItemPreventCombine**
+
+  Предотвращает возможные совмещения Шедоу-Стаков между собой.
+
+  *Работает только если активен **shadowItemFragilityFixes**.*
+
+- **shadowItemIdSize**
+
+  Изменяет длинну уникального идентификатора Шедоу-Стаков.
+
+- **shadowItemUseFix**
+
+  Предотвращает различные ошибки, связанные с использованием Шедоу-Стаков.
+
+- **shadowCraftingGeneration**
+
+  Добавляет возможность создания Шедоу-Стаков внутри сетки крафта с помощью эндер-сундуков.
 
 # Known Bugs/Известные Ошибки
+
 ## ENG
 If you are encountering any bugs, feel free to open an [issue](https://github.com/Ksandr707-yt/Carpet-Shadow-Legacy/issues).
 
 - Break shulker box with shadow items cause unlink.
+
+- Actions with shadow items in creative causing unlink.
 
 ## RU
 Если вы нашли ошибку, не стесняйтесь писать в [issue](https://github.com/Ksandr707-yt/Carpet-Shadow-Legacy/issues) проекта (можно на русском).
 
 - Ломание шалкера с Шедоу-Айтемами приводит к разлинковке.
 
+- Действия с Шедоу-Айтемами в креативе приводят к разлинковке.
