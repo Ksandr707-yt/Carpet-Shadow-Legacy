@@ -26,8 +26,6 @@ public abstract class ScreenHandlerMixin {
 
     @Shadow public abstract ItemStack getCursorStack();
 
-    @Shadow protected abstract boolean insertItem(ItemStack stack, int startIndex, int endIndex, boolean fromLast);
-
     @WrapOperation(method = "onSlotClick",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;internalOnSlotClick(IILnet/minecraft/screen/slot/SlotActionType;Lnet/minecraft/entity/player/PlayerEntity;)V"))
     private void handle_shadowing(ScreenHandler instance, int slotIndex, int button, SlotActionType actionType, PlayerEntity player, Operation<Void> original) {
@@ -47,7 +45,7 @@ public abstract class ScreenHandlerMixin {
 
             if(shadow != null){
                 CarpetShadowLegacy.LOGGER.warn("New Shadow Item Created");
-                String shadow_id = ((ShadowItem) (Object) shadow).carpet_shadow$getShadowId();
+                String shadow_id = ((ShadowItem) (Object) shadow).getShadowId();
                 if (shadow_id == null || shadow_id.isEmpty())
                     shadow_id = CarpetShadowLegacy.shadow_id_generator.nextString();
                 Globals.getByIdOrAdd(shadow_id,shadow);

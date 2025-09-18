@@ -1,4 +1,4 @@
-package com.ksandr707.carpet_shadow_legacy.newAPI;
+package com.ksandr707.carpet_shadow_legacy.component;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.component.ComponentsAccess;
@@ -35,7 +35,7 @@ public record ShadowComponent(String shadowId) implements TooltipAppender {
         MutableText sub = Text.literal(shadowId);
         sub.formatted(Formatting.GOLD, Formatting.BOLD);
         text.append(sub);
-        text.formatted(Formatting.DARK_PURPLE, Formatting.ITALIC);
+        text.formatted(Formatting.DARK_GRAY, Formatting.ITALIC);
         return text;
     }
 
@@ -43,13 +43,13 @@ public record ShadowComponent(String shadowId) implements TooltipAppender {
         return shadowId!=null && !shadowId.isEmpty() && shadowId.matches("\\S+?");
     }
 
-    static {
-        CODEC = TextCodecs.CODEC.fieldOf("shadow_id").xmap(ShadowComponent::new, ShadowComponent::getTextShadowId).codec();
-        PACKET_CODEC = TextCodecs.REGISTRY_PACKET_CODEC.xmap(ShadowComponent::new, ShadowComponent::getTextShadowId);
-    }
-
     @Override
     public void appendTooltip(Item.TooltipContext context, Consumer<Text> tooltip, TooltipType type, ComponentsAccess components) {
         if (shouldShowTooltip()) tooltip.accept(getTooltip());
+    }
+
+    static {
+        CODEC = TextCodecs.CODEC.fieldOf("shadow_id").xmap(ShadowComponent::new, ShadowComponent::getTextShadowId).codec();
+        PACKET_CODEC = TextCodecs.REGISTRY_PACKET_CODEC.xmap(ShadowComponent::new, ShadowComponent::getTextShadowId);
     }
 }

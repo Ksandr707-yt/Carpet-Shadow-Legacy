@@ -13,16 +13,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
 
-    @Inject(method = "setCount", at = @At("RETURN"))
-    public void propagate_update(int count, CallbackInfo ci) {
+    @Inject(method = "setCount", at=@At("RETURN"))
+    public void propagate_update(int count, CallbackInfo ci){
         if (CarpetShadowLegacySettings.shadowItemUpdateFix &&
-                ((ShadowItem) (Object) this).carpet_shadow$isItShadowItem()) {
-            String shadowId = ((ShadowItem) (Object) this).carpet_shadow$getShadowId();
+                ((ShadowItem) this).isItShadowItem()) {
+            String shadowId = ((ShadowItem) this).getShadowId();
             var cache = CarpetShadowLegacy.shadowMap.get(shadowId);
 
             if (cache != null) {
                 for (var entry : cache.getRight()) {
-                    Globals.markInventoryDirty(entry.getLeft());
+                    Globals.inventoriesToMarkDirty.add(entry.getLeft());
                 }
             }
         }

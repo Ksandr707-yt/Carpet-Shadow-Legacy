@@ -5,7 +5,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Pair;
-import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,9 +13,7 @@ import java.util.Set;
 public class Globals {
 
     public static final Set<Thread> mergingThreads = new HashSet<>();
-    public static final Set<Inventory> toUpdate = new HashSet<>();
     public static final Set<Inventory> inventoriesToMarkDirty = new HashSet<>();
-
 
     public static ItemStack getByIdOrNull(String shadow_id) {
         if(shadow_id == null)
@@ -31,31 +28,18 @@ public class Globals {
             return cache.getLeft();
         }
         CarpetShadowLegacy.shadowMap.put(shadow_id, new Pair<>(stack, new ArrayList<Pair<Inventory, Integer>>()));
-        ((ShadowItem)(Object)stack).carpet_shadow$setShadowId(shadow_id);
+        ((ShadowItem)(Object)stack).setShadowId(shadow_id);
         return stack;
-    }
-    public static void markInventoryDirty(Inventory inventory) {
-        inventoriesToMarkDirty.add(inventory);
-    }
-    public static void markDirtyInventories() {
-        for (Inventory inv : inventoriesToMarkDirty) {
-            try {
-                inv.markDirty();
-            } catch (Exception e) {
-                CarpetShadowLegacy.LOGGER.error("Error marking inventory dirty", e);
-            }
-        }
-        inventoriesToMarkDirty.clear();
     }
     public static boolean shadow_merge_check(ItemStack stack1, ItemStack stack2, boolean ret) {
         var allowed = ret;
         if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && mergingThreads.contains(Thread.currentThread())) {
             var shadowStack1 = (ShadowItem) (Object) stack1;
             var shadowStack2 = (ShadowItem) (Object) stack2;
-            var isStack1Shadow = shadowStack1.carpet_shadow$isItShadowItem();
-            var isStack2Shadow = shadowStack2.carpet_shadow$isItShadowItem();
-            String shadow1 = shadowStack1.carpet_shadow$getShadowId();
-            String shadow2 = shadowStack2.carpet_shadow$getShadowId();
+            var isStack1Shadow = shadowStack1.isItShadowItem();
+            var isStack2Shadow = shadowStack2.isItShadowItem();
+            String shadow1 = shadowStack1.getShadowId();
+            String shadow2 = shadowStack2.getShadowId();
             if (stack1.isOf(stack2.getItem()) && ((isStack1Shadow && !isStack2Shadow) || (!isStack1Shadow && isStack2Shadow)))
                 allowed = true;
             if (CarpetShadowLegacySettings.shadowItemPreventCombine && allowed) {
@@ -66,18 +50,14 @@ public class Globals {
         }
         return allowed;
     }
-    public static boolean isShadowIdExists(String id) {
-        return CarpetShadowLegacy.shadowMap.containsKey(id);
-    }
-
     public static void updateInventory(Object object) {
         if (object instanceof Inventory inv) {
             removeInventory(object);
             try {
                 for (int index = 0; index < inv.size(); index++) {
                     ItemStack stack = inv.getStack(index);
-                    if (!stack.isEmpty() && ((ShadowItem) (Object) stack).carpet_shadow$isItShadowItem()) {
-                        var shadowId = ((ShadowItem)(Object)stack).carpet_shadow$getShadowId();
+                    if (!stack.isEmpty() && ((ShadowItem) (Object) stack).isItShadowItem()) {
+                        var shadowId = ((ShadowItem)(Object)stack).getShadowId();
                         var cache = CarpetShadowLegacy.shadowMap.get(shadowId);
                         var pair = new Pair<>(inv, index);
                         if (cache != null) {
@@ -94,13 +74,6 @@ public class Globals {
         }
     }
 
-    public static void updateItemStack(ItemStack stack) {
-        if (!stack.isEmpty() && ((ShadowItem) (Object) stack).carpet_shadow$isItShadowItem()) {
-            var cache = CarpetShadowLegacy.shadowMap.get(((ShadowItem)(Object)stack).carpet_shadow$getShadowId());
-            if (cache != null) cache.getLeft().setCount(stack.getCount());
-            else CarpetShadowLegacy.shadowMap.put(((ShadowItem) (Object) stack).carpet_shadow$getShadowId(), new Pair<>(stack, new ArrayList<>()));
-        }
-    }
     public static void addInventory(String shadowId, Object object, int slot) {
         if (object instanceof Inventory inv) {
             var cache = CarpetShadowLegacy.shadowMap.get(shadowId);
@@ -118,8 +91,8 @@ public class Globals {
             try {
                 for (int index = 0; index < inv.size(); index++) {
                     ItemStack stack = inv.getStack(index);
-                    if (((ShadowItem) (Object) stack).carpet_shadow$isItShadowItem()) {
-                        var shadowId = ((ShadowItem)(Object)stack).carpet_shadow$getShadowId();
+                    if (((ShadowItem) (Object) stack).isItShadowItem()) {
+                        var shadowId = ((ShadowItem)(Object)stack).getShadowId();
                         var cache = CarpetShadowLegacy.shadowMap.get(shadowId);
                         if (cache!=null) {
                             var pair = new Pair<>(inv, index);
@@ -130,12 +103,7 @@ public class Globals {
             } catch (Exception ignored){}
         }
         else if (object instanceof Entity entity && entity instanceof Inventory) {
-            updateInventory((Inventory) entity);
+            updateInventory(entity);
         }
-    }
-    public static void updateInventories(String shadowId) {
-        var cache = CarpetShadowLegacy.shadowMap.get(shadowId);
-        if (cache != null)
-            toUpdate.addAll(cache.getRight().stream().map(it -> it.getLeft()).toList());
     }
 }
