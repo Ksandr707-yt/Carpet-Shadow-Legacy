@@ -15,7 +15,7 @@ public abstract class EntityMixin {
     private void onEntityLoad(ReadView view, CallbackInfo ci) {
         Entity entity = (Entity)(Object)this;
         if (entity instanceof Inventory) {
-            entity.getWorld().getServer().execute(() -> {
+            entity.getEntityWorld().getServer().execute(() -> {
                 Globals.updateInventory(entity);
             });
         }
