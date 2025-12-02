@@ -64,7 +64,7 @@ public class RecipeManagerMixin {
                 for(int i = 0; i < inventory.getSize(); ++i) {
                     ItemStack itemStack2 = inventory.getStackInSlot(i);
                     if (!itemStack2.isEmpty()) {
-                        if (itemStack2.getItem().equals(Items.ENDER_CHEST)) {
+                        if (itemStack2.getItem().equals(Items.ENDER_CHEST) && itemStack2.getCount() == 1) {
                             if (enderchest != null)
                                 item = enderchest;
                             enderchest = itemStack2;
