@@ -14,7 +14,6 @@
     "fragility.ScreenHandlerMixin",
     "fragility.SlotMixin",
     "general.ItemStackMixin",
-    "general.LootTableMixin",
     "general.ScreenHandlerMixin",
     "hand_update_fix.ServerPlayerInteractionManagerMixin",
     "inv_updates.ItemStackMixin",
