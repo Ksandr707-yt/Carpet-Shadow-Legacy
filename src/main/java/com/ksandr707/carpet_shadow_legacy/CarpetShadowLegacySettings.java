@@ -4,7 +4,7 @@ import carpet.api.settings.CarpetRule;
 import carpet.api.settings.Rule;
 import carpet.api.settings.Validator;
 import com.ksandr707.carpet_shadow_legacy.utility.RandomString;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import org.jetbrains.annotations.Nullable;
 
 import static carpet.api.settings.RuleCategory.*;
@@ -32,7 +32,7 @@ public class CarpetShadowLegacySettings {
 
     private static class IdSizeValidator extends Validator<Integer> {
         @Override
-        public Integer validate(@Nullable ServerCommandSource source, CarpetRule<Integer> changingRule, Integer newValue, String userInput) {
+        public Integer validate(@Nullable CommandSourceStack source, CarpetRule<Integer> changingRule, Integer newValue, String userInput) {
             try {
                 CarpetShadowLegacy.shadow_id_generator = new RandomString(newValue);
                 return newValue;

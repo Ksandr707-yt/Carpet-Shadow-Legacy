@@ -7,20 +7,20 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ItemScatterer;
+import net.minecraft.world.Containers;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@Mixin(ItemScatterer.class)
+@Mixin(Containers.class)
 public abstract class ItemScattererMixin {
 
-    @ModifyExpressionValue(method = "spawn(Lnet/minecraft/world/World;DDDLnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE",target = "Lnet/minecraft/item/ItemStack;isEmpty()Z"))
+    @ModifyExpressionValue(method = "dropItemStack(Lnet/minecraft/world/level/Level;DDDLnet/minecraft/world/item/ItemStack;)V", at = @At(value = "INVOKE",target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z"))
     private static boolean exitLoop(boolean empty, @Share("break") LocalBooleanRef quit){
         return empty || quit.get();
     }
 
-    @WrapOperation(method = "spawn(Lnet/minecraft/world/World;DDDLnet/minecraft/item/ItemStack;)V", at = @At(value = "INVOKE",target = "Lnet/minecraft/item/ItemStack;split(I)Lnet/minecraft/item/ItemStack;"))
+    @WrapOperation(method = "dropItemStack(Lnet/minecraft/world/level/Level;DDDLnet/minecraft/world/item/ItemStack;)V", at = @At(value = "INVOKE",target = "Lnet/minecraft/world/item/ItemStack;split(I)Lnet/minecraft/world/item/ItemStack;"))
     private static ItemStack modify_split(ItemStack stack, int amount, Operation<ItemStack> original, @Share("break") LocalBooleanRef quit){
         if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem)(Object)stack).isItShadowItem()){
             quit.set(true);

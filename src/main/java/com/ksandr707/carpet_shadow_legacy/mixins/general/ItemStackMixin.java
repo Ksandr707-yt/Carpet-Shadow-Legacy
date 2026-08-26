@@ -3,7 +3,7 @@ package com.ksandr707.carpet_shadow_legacy.mixins.general;
 import com.ksandr707.carpet_shadow_legacy.component.ShadowComponent;
 import com.ksandr707.carpet_shadow_legacy.component.ShadowNBTData;
 import com.ksandr707.carpet_shadow_legacy.interfaces.ShadowItem;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 
 
@@ -25,7 +25,7 @@ public class ItemStackMixin implements ShadowItem {
 
     @Override
     public boolean containsShadowComponent() {
-        return ((ItemStack)(Object)this).getComponents().contains(ShadowNBTData.SHADOW);
+        return ((ItemStack)(Object)this).getComponents().has(ShadowNBTData.SHADOW);
     }
 
     @Override

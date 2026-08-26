@@ -1,41 +1,40 @@
 package com.ksandr707.carpet_shadow_legacy.component;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.component.ComponentsAccess;
-import net.minecraft.item.Item;
-import net.minecraft.item.tooltip.TooltipAppender;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-
 import java.util.function.Consumer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponentGetter;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipProvider;
 
-public record ShadowComponent(String shadowId) implements TooltipAppender {
+public record ShadowComponent(String shadowId) implements TooltipProvider {
 
-    public static final Identifier IDENTIFIER = Identifier.of("carpet-shadow", "shadow");
+    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("carpet-shadow", "shadow");
     public static final Codec<ShadowComponent> CODEC;
-    public static final PacketCodec<RegistryByteBuf, ShadowComponent> PACKET_CODEC;
+    public static final StreamCodec<RegistryFriendlyByteBuf, ShadowComponent> PACKET_CODEC;
 
 
 
-    public ShadowComponent(Text shadowIdText) {
+    public ShadowComponent(Component shadowIdText) {
         this(shadowIdText.getString());
     }
 
-    public Text getTextShadowId() {
-        return Text.of(shadowId);
+    public Component getTextShadowId() {
+        return Component.nullToEmpty(shadowId);
     }
-    public Text getTooltip() {
-        MutableText text = Text.literal("shadow_id: ");
-        MutableText sub = Text.literal(shadowId);
-        sub.formatted(Formatting.GOLD, Formatting.BOLD);
+    public Component getTooltip() {
+        MutableComponent text = Component.literal("shadow_id: ");
+        MutableComponent sub = Component.literal(shadowId);
+        sub.withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD);
         text.append(sub);
-        text.formatted(Formatting.DARK_GRAY, Formatting.ITALIC);
+        text.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC);
         return text;
     }
 
@@ -44,12 +43,12 @@ public record ShadowComponent(String shadowId) implements TooltipAppender {
     }
 
     @Override
-    public void appendTooltip(Item.TooltipContext context, Consumer<Text> tooltip, TooltipType type, ComponentsAccess components) {
+    public void addToTooltip(Item.TooltipContext context, Consumer<Component> tooltip, TooltipFlag type, DataComponentGetter components) {
         if (shouldShowTooltip()) tooltip.accept(getTooltip());
     }
 
     static {
-        CODEC = TextCodecs.CODEC.fieldOf("shadow_id").xmap(ShadowComponent::new, ShadowComponent::getTextShadowId).codec();
-        PACKET_CODEC = TextCodecs.REGISTRY_PACKET_CODEC.xmap(ShadowComponent::new, ShadowComponent::getTextShadowId);
+        CODEC = ComponentSerialization.CODEC.fieldOf("shadow_id").xmap(ShadowComponent::new, ShadowComponent::getTextShadowId).codec();
+        PACKET_CODEC = ComponentSerialization.STREAM_CODEC.map(ShadowComponent::new, ShadowComponent::getTextShadowId);
     }
 }

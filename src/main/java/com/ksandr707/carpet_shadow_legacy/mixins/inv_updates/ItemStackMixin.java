@@ -4,7 +4,7 @@ import com.ksandr707.carpet_shadow_legacy.CarpetShadowLegacy;
 import com.ksandr707.carpet_shadow_legacy.CarpetShadowLegacySettings;
 import com.ksandr707.carpet_shadow_legacy.Globals;
 import com.ksandr707.carpet_shadow_legacy.interfaces.ShadowItem;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,8 +21,8 @@ public abstract class ItemStackMixin {
             var cache = CarpetShadowLegacy.shadowMap.get(shadowId);
 
             if (cache != null) {
-                for (var entry : cache.getRight()) {
-                    Globals.inventoriesToMarkDirty.add(entry.getLeft());
+                for (var entry : cache.getB()) {
+                    Globals.inventoriesToMarkDirty.add(entry.getA());
                 }
             }
         }

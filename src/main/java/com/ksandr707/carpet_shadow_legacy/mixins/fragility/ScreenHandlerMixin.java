@@ -6,11 +6,11 @@ import com.ksandr707.carpet_shadow_legacy.interfaces.ShadowItem;
 import com.ksandr707.carpet_shadow_legacy.interfaces.ShifingItem;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,53 +18,53 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ScreenHandler.class)
+@Mixin(AbstractContainerMenu.class)
 public abstract class ScreenHandlerMixin {
     @Shadow
-    public abstract ItemStack getCursorStack();
+    public abstract ItemStack getCarried();
 
-    @Inject(method = "internalOnSlotClick", at = @At("HEAD"))
-    public void merging_start(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci){
+    @Inject(method = "doClick", at = @At("HEAD"))
+    public void merging_start(int slotIndex, int buttonNum, ContainerInput containerInput, Player player, CallbackInfo ci){
         Globals.mergingThreads.add(Thread.currentThread());
     }
 
-    @Inject(method = "internalOnSlotClick", at = @At("RETURN"))
-    public void merging_end(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci){
+    @Inject(method = "doClick", at = @At("RETURN"))
+    public void merging_end(int slotIndex, int buttonNum, ContainerInput containerInput, Player player, CallbackInfo ci){
         Globals.mergingThreads.remove(Thread.currentThread());
     }
 
-    @WrapOperation(method = "internalOnSlotClick", slice = @Slice(
-            from = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;canTakeItems(Lnet/minecraft/entity/player/PlayerEntity;)Z", ordinal = 1)),
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;setCursorStack(Lnet/minecraft/item/ItemStack;)V", ordinal = 1)
+    @WrapOperation(method = "doClick", slice = @Slice(
+            from = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/Slot;mayPickup(Lnet/minecraft/world/entity/player/Player;)Z", ordinal = 1)),
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/AbstractContainerMenu;setCarried(Lnet/minecraft/world/item/ItemStack;)V", ordinal = 1)
     )
-    public void remove_shadow_stack(ScreenHandler instance, ItemStack stack, Operation<Void> original) {
-        String shadowId1 = ((ShadowItem) (Object) getCursorStack()).getShadowId();
+    public void remove_shadow_stack(AbstractContainerMenu instance, ItemStack stack, Operation<Void> original) {
+        String shadowId1 = ((ShadowItem) (Object) getCarried()).getShadowId();
         String shadowId2 = ((ShadowItem) (Object) stack).getShadowId();
         if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem)(Object)stack).isItShadowItem() && shadowId1.equals(shadowId2)) {
-            instance.setCursorStack(ItemStack.EMPTY);
+            instance.setCarried(ItemStack.EMPTY);
         } else {
             original.call(instance, stack);
         }
     }
 
-    @WrapOperation(method = "internalOnSlotClick", slice = @Slice(
-            from = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;canTakeItems(Lnet/minecraft/entity/player/PlayerEntity;)Z")
+    @WrapOperation(method = "doClick", slice = @Slice(
+            from = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/Slot;mayPickup(Lnet/minecraft/world/entity/player/Player;)Z")
     ),
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;quickMove(Lnet/minecraft/entity/player/PlayerEntity;I)Lnet/minecraft/item/ItemStack;"))
-    public ItemStack fix_shift(ScreenHandler instance, PlayerEntity player, int index, Operation<ItemStack> original) {
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/AbstractContainerMenu;quickMoveStack(Lnet/minecraft/world/entity/player/Player;I)Lnet/minecraft/world/item/ItemStack;"))
+    public ItemStack fix_shift(AbstractContainerMenu instance, Player player, int index, Operation<ItemStack> original) {
         if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix) {
             Slot og = instance.slots.get(index);
-            ItemStack og_item = og.getStack();
+            ItemStack og_item = og.getItem();
             if (((ShadowItem) (Object) og_item).isItShadowItem()) {
                 ItemStack mirror = og_item.copy();
                 ((ShadowItem) (Object) mirror).setShadowId(((ShadowItem) (Object) og_item).getShadowId());
-                og.setStack(mirror);
+                og.setByPlayer(mirror);
                 ((ShifingItem)(Object)mirror).setShiftMoving(true);
                 ItemStack ret = original.call(instance, player, index);
                 ((ShifingItem)(Object)mirror).setShiftMoving(false);
                 if (ret == ItemStack.EMPTY) {
                     og_item = Globals.getByIdOrAdd(((ShadowItem) (Object) og_item).getShadowId(), og_item);
-                    og.setStack(og_item);
+                    og.setByPlayer(og_item);
                     og_item.setCount(mirror.getCount());
                 }
                 return ret;
@@ -73,10 +73,10 @@ public abstract class ScreenHandlerMixin {
         return original.call(instance, player, index);
     }
 
-    @WrapOperation(method = "insertItem", slice = @Slice(
-            from = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;getStack()Lnet/minecraft/item/ItemStack;", ordinal = 1)
+    @WrapOperation(method = "moveItemStackTo", slice = @Slice(
+            from = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/Slot;getItem()Lnet/minecraft/world/item/ItemStack;", ordinal = 1)
     ),
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;split(I)Lnet/minecraft/item/ItemStack;", ordinal = 0))
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;split(I)Lnet/minecraft/world/item/ItemStack;", ordinal = 0))
     public ItemStack fix_shift(ItemStack instance, int amount, Operation<ItemStack> original) {
         if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) instance).isItShadowItem()) {
             String shadow_id = ((ShadowItem) (Object) instance).getShadowId();
@@ -90,8 +90,8 @@ public abstract class ScreenHandlerMixin {
         return original.call(instance, amount);
     }
 
-    @WrapOperation(method = "insertItem",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z",ordinal = 0))
+    @WrapOperation(method = "moveItemStackTo",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEmpty()Z",ordinal = 0))
     public boolean fix_shift2(ItemStack instance, Operation<Boolean> original) {
         if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShifingItem) (Object) instance).isShiftMoving()) {
             return true;
@@ -99,15 +99,15 @@ public abstract class ScreenHandlerMixin {
         return original.call(instance);
     }
 
-    @WrapOperation(method = "internalOnSlotClick",
+    @WrapOperation(method = "doClick",
             slice = @Slice(
-                    from = @At(value = "INVOKE",target = "Lnet/minecraft/util/collection/DefaultedList;get(I)Ljava/lang/Object;"),
+                    from = @At(value = "INVOKE",target = "Lnet/minecraft/core/NonNullList;get(I)Ljava/lang/Object;"),
                     to = @At(value = "INVOKE",target = "Ljava/util/Set;add(Ljava/lang/Object;)Z")
             ),
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;canInsertItemIntoSlot(Lnet/minecraft/screen/slot/Slot;Lnet/minecraft/item/ItemStack;Z)Z"))
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/AbstractContainerMenu;canItemQuickReplace(Lnet/minecraft/world/inventory/Slot;Lnet/minecraft/world/item/ItemStack;Z)Z"))
     public boolean fixQuickCraft(Slot slot, ItemStack stack, boolean allowOverflow, Operation<Boolean> original) {
         if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix) {
-            ItemStack slotStack = slot.getStack();
+            ItemStack slotStack = slot.getItem();
             ItemStack ref1 = Globals.getByIdOrNull(((ShadowItem) (Object) slotStack).getShadowId());
             ItemStack ref2 = Globals.getByIdOrNull(((ShadowItem) (Object) stack).getShadowId());
             if(slotStack == ref1 || stack == ref2)

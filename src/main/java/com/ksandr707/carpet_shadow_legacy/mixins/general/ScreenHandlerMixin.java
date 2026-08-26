@@ -6,11 +6,11 @@ import com.ksandr707.carpet_shadow_legacy.Globals;
 import com.ksandr707.carpet_shadow_legacy.interfaces.ShadowItem;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,65 +19,96 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ScreenHandler.class)
+@Mixin(AbstractContainerMenu.class)
 public abstract class ScreenHandlerMixin {
 
-    @Shadow public abstract Slot getSlot(int index);
+    @Shadow
+    public abstract Slot getSlot(int index);
 
-    @Shadow public abstract ItemStack getCursorStack();
+    @Shadow
+    public abstract ItemStack getCarried();
 
-    @WrapOperation(method = "onSlotClick",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/ScreenHandler;internalOnSlotClick(IILnet/minecraft/screen/slot/SlotActionType;Lnet/minecraft/entity/player/PlayerEntity;)V"))
-    private void handle_shadowing(ScreenHandler instance, int slotIndex, int button, SlotActionType actionType, PlayerEntity player, Operation<Void> original) {
+    @WrapOperation(
+            method = "clicked",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/inventory/AbstractContainerMenu;doClick(IILnet/minecraft/world/inventory/ContainerInput;Lnet/minecraft/world/entity/player/Player;)V"
+            )
+    )
+    private void handle_shadowing(AbstractContainerMenu instance, int slotIndex, int button, ContainerInput actionType, Player player, Operation<Void> original) {
         try {
             original.call(instance, slotIndex, button, actionType, player);
         } catch (Throwable error) {
-            if(actionType!=SlotActionType.SWAP && actionType!=SlotActionType.PICKUP && actionType!=SlotActionType.QUICK_CRAFT)
+            if (actionType != ContainerInput.SWAP && actionType != ContainerInput.PICKUP && actionType != ContainerInput.QUICK_CRAFT)
                 throw error;
-            ItemStack stack1 = this.getSlot(slotIndex).getStack();
-            ItemStack stack2 = player.getInventory().getStack(button);
-            ItemStack stack3 = this.getCursorStack();
+            ItemStack stack1 = this.getSlot(slotIndex).getItem();
+            ItemStack stack2 = player.getInventory().getItem(button);
+            ItemStack stack3 = this.getCarried();
             ItemStack shadow = null;
-            if(stack1 == stack2 || stack1 == stack3)
+            if (stack1 == stack2 || stack1 == stack3)
                 shadow = stack1;
             else if (stack2 == stack3)
                 shadow = stack2;
 
-            if(shadow != null){
+            if (shadow != null) {
                 CarpetShadowLegacy.LOGGER.warn("New Shadow Item Created");
                 String shadow_id = ((ShadowItem) (Object) shadow).getShadowId();
                 if (shadow_id == null || shadow_id.isEmpty())
                     shadow_id = CarpetShadowLegacy.shadow_id_generator.nextString();
-                Globals.getByIdOrAdd(shadow_id,shadow);
+                Globals.getByIdOrAdd(shadow_id, shadow);
             }
         }
     }
 
-    @Inject(method = "internalOnSlotClick",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;setStack(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE),
+    @Inject(
+            method = "doClick",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/inventory/Slot;setByPlayer(Lnet/minecraft/world/item/ItemStack;)V",
+                    shift = At.Shift.BEFORE
+            ),
             slice = @Slice(
-                    from = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;onPickupSlotClick(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/ClickType;)V"),
-                    to = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;markDirty()V"))
+                    from = @At(
+                            value = "INVOKE",
+                            target = "Lnet/minecraft/world/entity/player/Player;updateTutorialInventoryAction(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/inventory/ClickAction;)V"
+                    ),
+                    to = @At(
+                            value = "INVOKE",
+                            target = "Lnet/minecraft/world/inventory/Slot;setChanged()V"
+                    )
+            )
     )
-    private void reintroduceSuppressionShadowing1(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci){
-        if (CarpetShadowLegacySettings.shadowSuppressionGeneration){
+    private void reintroduceSuppressionShadowing1(int slotIndex, int buttonNum, ContainerInput containerInput, Player player, CallbackInfo ci) {
+        if (CarpetShadowLegacySettings.shadowSuppressionGeneration) {
             Slot slot = this.getSlot(slotIndex);
-            slot.markDirty();
+            slot.setChanged();
         }
     }
 
-    @Inject(method = "internalOnSlotClick",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/slot/Slot;setStack(Lnet/minecraft/item/ItemStack;)V", shift = At.Shift.BEFORE),
+    @Inject(
+            method = "doClick",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/inventory/Slot;setByPlayer(Lnet/minecraft/world/item/ItemStack;)V",
+                    shift = At.Shift.BEFORE
+            ),
             slice = @Slice(
-                    from = @At(value = "FIELD", target = "Lnet/minecraft/screen/slot/SlotActionType;SWAP:Lnet/minecraft/screen/slot/SlotActionType;", opcode = Opcodes.GETSTATIC),
-                    to = @At(value = "FIELD", target = "Lnet/minecraft/screen/slot/SlotActionType;CLONE:Lnet/minecraft/screen/slot/SlotActionType;", opcode = Opcodes.GETSTATIC))
+                    from = @At(
+                            value = "FIELD",
+                            target = "Lnet/minecraft/world/inventory/ContainerInput;SWAP:Lnet/minecraft/world/inventory/ContainerInput;",
+                            opcode = Opcodes.GETSTATIC
+                    ),
+                    to = @At(
+                            value = "FIELD",
+                            target = "Lnet/minecraft/world/inventory/ContainerInput;CLONE:Lnet/minecraft/world/inventory/ContainerInput;",
+                            opcode = Opcodes.GETSTATIC
+                    )
+            )
     )
-    private void reintroduceSuppressionShadowing2(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci){
-        if (CarpetShadowLegacySettings.shadowSuppressionGeneration){
+    private void reintroduceSuppressionShadowing2(int slotIndex, int buttonNum, ContainerInput containerInput, Player player, CallbackInfo ci) {
+        if (CarpetShadowLegacySettings.shadowSuppressionGeneration) {
             Slot slot = this.getSlot(slotIndex);
-            slot.markDirty();
+            slot.setChanged();
         }
     }
-
-
 }

@@ -1,7 +1,7 @@
 package com.ksandr707.carpet_shadow_legacy.interfaces;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public interface ShadowItem {
 

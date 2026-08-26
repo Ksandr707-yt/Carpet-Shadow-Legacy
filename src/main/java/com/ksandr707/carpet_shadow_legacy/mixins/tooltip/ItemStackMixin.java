@@ -4,23 +4,23 @@ import com.ksandr707.carpet_shadow_legacy.CarpetShadowLegacySettings;
 import com.ksandr707.carpet_shadow_legacy.component.ShadowNBTData;
 import com.ksandr707.carpet_shadow_legacy.interfaces.ShadowItem;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
 
-    @Shadow public abstract ComponentMap getComponents();
+    @Shadow public abstract DataComponentMap getComponents();
 
-    @ModifyReturnValue(method = "getTooltip", at = @At("RETURN"))
-    private List<Text> postToolTip(List<Text> original) {
+    @ModifyReturnValue(method = "getTooltipLines", at = @At("RETURN"))
+    private List<Component> postToolTip(List<Component> original) {
         var list = new ArrayList<>(original);
         if (CarpetShadowLegacySettings.shadowItemTooltip) {
             if (((ShadowItem) this).isItShadowItem())
