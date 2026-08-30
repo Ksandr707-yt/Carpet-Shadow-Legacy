@@ -35,8 +35,9 @@ public class RecipeManagerMixin {
         Recipe<?> recipe = new BookCloningRecipe(CraftingRecipeCategory.MISC) {
             @Override
             public boolean matches(CraftingRecipeInput inventory, World world) {
-                if (!CarpetShadowLegacySettings.shadowCraftingGeneration)
+                if (CarpetShadowLegacySettings.shadowItemMode == CarpetShadowLegacySettings.Mode.UNLINK || !CarpetShadowLegacySettings.shadowCraftingGeneration)
                     return false;
+
                 boolean enderchest = false;
                 List<ItemStack> stacks = new ArrayList<>();
                 int count = 0;
@@ -56,7 +57,7 @@ public class RecipeManagerMixin {
 
             @Override
             public ItemStack craft(CraftingRecipeInput inventory, RegistryWrapper.WrapperLookup wrapperLookup) {
-                if (!CarpetShadowLegacySettings.shadowCraftingGeneration)
+                if (CarpetShadowLegacySettings.shadowItemMode == CarpetShadowLegacySettings.Mode.UNLINK || !CarpetShadowLegacySettings.shadowCraftingGeneration)
                     return ItemStack.EMPTY;
 
                 ItemStack item = null;
@@ -77,7 +78,7 @@ public class RecipeManagerMixin {
 
                 String id = ((ShadowItem)(Object)item).getShadowId();
                 if (id == null){
-                    id = CarpetShadowLegacy.shadow_id_generator.nextString();
+                    id = Globals.createShadowId();
                 }
                 return Globals.getByIdOrAdd(id, item);
             }
@@ -106,7 +107,7 @@ public class RecipeManagerMixin {
 
             @Override
             public boolean fits(int width, int height) {
-                if (!CarpetShadowLegacySettings.shadowCraftingGeneration)
+                if (CarpetShadowLegacySettings.shadowItemMode == CarpetShadowLegacySettings.Mode.UNLINK || !CarpetShadowLegacySettings.shadowCraftingGeneration)
                     return false;
                 return width * height >= 2;
             }

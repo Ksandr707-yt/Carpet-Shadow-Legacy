@@ -1,17 +1,14 @@
 package com.ksandr707.carpet_shadow_legacy;
 
-import carpet.api.settings.CarpetRule;
 import carpet.api.settings.Rule;
-import carpet.api.settings.Validator;
-import com.ksandr707.carpet_shadow_legacy.utility.RandomString;
-import net.minecraft.server.command.ServerCommandSource;
-import org.jetbrains.annotations.Nullable;
 
 import static carpet.api.settings.RuleCategory.*;
 
 public class CarpetShadowLegacySettings {
     public static final String SHADOW = "shadow_items";
-    @Rule( categories = {SHADOW}, validators = {IdSizeValidator.class})
+    @Rule( categories = {SHADOW, BUGFIX})
+    public static Mode shadowItemMode = Mode.PERSIST;
+    @Rule( categories = {SHADOW})
     public static int shadowItemIdSize = 5;
     @Rule( categories = {SHADOW, FEATURE})
     public static boolean shadowSuppressionGeneration = false;
@@ -30,15 +27,24 @@ public class CarpetShadowLegacySettings {
     @Rule( categories = {SHADOW, OPTIMIZATION, FEATURE})
     public static boolean shadowItemUseFix = false;
 
-    private static class IdSizeValidator extends Validator<Integer> {
-        @Override
-        public Integer validate(@Nullable ServerCommandSource source, CarpetRule<Integer> changingRule, Integer newValue, String userInput) {
-            try {
-                CarpetShadowLegacy.shadow_id_generator = new RandomString(newValue);
-                return newValue;
-            } catch (IllegalArgumentException ex) {
-                return changingRule.value();
-            }
+    public enum Mode{
+        UNLINK(false,false),
+        PERSIST(true,false),
+        VANISH(true,true);
+
+        private final boolean shouldLoadItem;
+        private final boolean shouldResetCount;
+
+        public boolean shouldLoadItem() {
+            return shouldLoadItem;
+        }
+        public boolean shouldResetCount() {
+            return shouldResetCount;
+        }
+
+        Mode(boolean shouldLoadItem, boolean shouldResetCount) {
+            this.shouldLoadItem = shouldLoadItem;
+            this.shouldResetCount = shouldResetCount;
         }
     }
 }

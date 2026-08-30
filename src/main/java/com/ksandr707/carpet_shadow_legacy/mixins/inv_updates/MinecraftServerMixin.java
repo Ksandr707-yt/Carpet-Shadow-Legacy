@@ -19,7 +19,7 @@ public abstract class MinecraftServerMixin {
     public void afterWorldTick(BooleanSupplier shouldKeepTicking, CallbackInfo ci){
         try{
             if(CarpetShadowLegacySettings.shadowItemUpdateFix) {
-                for (Inventory inv : Globals.inventoriesToMarkDirty) {
+                for (Inventory inv : Globals.toUpdate) {
                     try {
                         inv.markDirty();
                     } catch (Throwable ex) {
@@ -30,7 +30,8 @@ public abstract class MinecraftServerMixin {
         }catch (Throwable error){
             CarpetShadowLegacy.LOGGER.error("Caught Exception while propagating shadow stack updates: ",error);
         }finally {
-            Globals.inventoriesToMarkDirty.clear();
+            Globals.toUpdate.clear();
         }
     }
+
 }

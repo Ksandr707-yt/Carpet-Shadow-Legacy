@@ -1,6 +1,6 @@
 package com.ksandr707.carpet_shadow_legacy.mixins.inv_updates;
 
-import com.ksandr707.carpet_shadow_legacy.Globals;
+import com.ksandr707.carpet_shadow_legacy.interfaces.InventoryItem;
 import com.ksandr707.carpet_shadow_legacy.interfaces.ShadowItem;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -21,17 +21,15 @@ public abstract class SlotMixin {
 
     @Shadow public abstract int getIndex();
 
-    @Inject(method = "setStack",
+    @Inject(method = "setStack(Lnet/minecraft/item/ItemStack;)V",
             at = @At(value = "HEAD"))
     public void remember_inventory(ItemStack next, CallbackInfo ci) {
-            ItemStack curr = getStack();
-            if(((ShadowItem)(Object)curr).isItShadowItem()){
-                var shadowId = ((ShadowItem)(Object)curr).getShadowId();
-                Globals.removeInventory(shadowId, this.inventory, getIndex());
-            }
-            if(((ShadowItem)(Object)next).isItShadowItem()){
-                var shadowId = ((ShadowItem)(Object)next).getShadowId();
-                Globals.addInventory(shadowId, this.inventory, getIndex());
-            }
+        ItemStack curr = getStack();
+        if(((ShadowItem)(Object)curr).getShadowId() != null){
+            ((InventoryItem)(Object)curr).removeSlot(this.inventory, getIndex());
+        }
+        if(((ShadowItem)(Object)next).getShadowId() != null){
+            ((InventoryItem)(Object)next).addSlot(this.inventory, getIndex());
+        }
     }
 }

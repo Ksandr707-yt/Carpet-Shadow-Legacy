@@ -40,7 +40,7 @@ public abstract class ScreenHandlerMixin {
     public void remove_shadow_stack(ScreenHandler instance, ItemStack stack, Operation<Void> original) {
         String shadowId1 = ((ShadowItem) (Object) getCursorStack()).getShadowId();
         String shadowId2 = ((ShadowItem) (Object) stack).getShadowId();
-        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem)(Object)stack).isItShadowItem() && shadowId1.equals(shadowId2)) {
+        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem)(Object)stack).isShadowItem() && shadowId1.equals(shadowId2)) {
             instance.setCursorStack(ItemStack.EMPTY);
         } else {
             original.call(instance, stack);
@@ -55,7 +55,7 @@ public abstract class ScreenHandlerMixin {
         if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix) {
             Slot og = instance.slots.get(index);
             ItemStack og_item = og.getStack();
-            if (((ShadowItem) (Object) og_item).isItShadowItem()) {
+            if (((ShadowItem) (Object) og_item).isShadowItem()) {
                 ItemStack mirror = og_item.copy();
                 ((ShadowItem) (Object) mirror).setShadowId(((ShadowItem) (Object) og_item).getShadowId());
                 og.setStack(mirror);
@@ -78,7 +78,7 @@ public abstract class ScreenHandlerMixin {
     ),
             at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;split(I)Lnet/minecraft/item/ItemStack;", ordinal = 0))
     public ItemStack fix_shift(ItemStack instance, int amount, Operation<ItemStack> original) {
-        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) instance).isItShadowItem()) {
+        if (CarpetShadowLegacySettings.shadowItemInventoryFragilityFix && ((ShadowItem) (Object) instance).isShadowItem()) {
             String shadow_id = ((ShadowItem) (Object) instance).getShadowId();
             ItemStack og_item = Globals.getByIdOrNull(shadow_id);
             if (og_item != null) {

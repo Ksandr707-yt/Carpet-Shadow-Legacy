@@ -1,6 +1,6 @@
 package com.ksandr707.carpet_shadow_legacy.mixins.inv_updates.loaders;
 
-import com.ksandr707.carpet_shadow_legacy.Globals;
+import com.ksandr707.carpet_shadow_legacy.interfaces.InventoryItem;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
@@ -14,6 +14,6 @@ public abstract class CloneCommandMixin {
 
     @Redirect(method = "execute",at=@At(value = "INVOKE",target = "Lnet/minecraft/block/entity/BlockEntity;readComponentlessNbt(Lnet/minecraft/nbt/NbtCompound;Lnet/minecraft/registry/RegistryWrapper$WrapperLookup;)V"))
     private static void interceptBlockEntityLoad(BlockEntity instance, NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup){
-        Globals.updateInventory(instance);
+        InventoryItem.readNbt(instance,nbt,registryLookup);
     }
 }

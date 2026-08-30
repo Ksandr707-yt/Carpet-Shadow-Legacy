@@ -1,5 +1,9 @@
 {
   "carpet.category.shadow_items": "shadow_items",
+  "carpet.rule.shadowItemMode.desc": "Shadow Items Action over Unloading: ",
+  "carpet.rule.shadowItemMode.extra.0": "UNLINK -> default vanilla",
+  "carpet.rule.shadowItemMode.extra.1": "PERSIST -> shadow items will survive unloading",
+  "carpet.rule.shadowItemMode.extra.2": "VANISH -> shadow items will disappear if unloaded",
   "carpet.rule.shadowItemIdSize.name": "shadowItemIdSize",
   "carpet.rule.shadowItemIdSize.desc": "Shadow Items Id Length",
   "carpet.rule.shadowSuppressionGeneration.name": "shadowSuppressionGeneration",

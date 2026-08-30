@@ -1,7 +1,8 @@
 package com.ksandr707.carpet_shadow_legacy.mixins.inv_updates;
 
-import com.ksandr707.carpet_shadow_legacy.Globals;
+import com.ksandr707.carpet_shadow_legacy.interfaces.InventoryItem;
 import com.ksandr707.carpet_shadow_legacy.interfaces.ShadowItem;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,22 +21,19 @@ public abstract class SimpleInventoryMixin {
     @Inject(method = "removeStack(I)Lnet/minecraft/item/ItemStack;", at = @At("HEAD"))
     public void track_remove(int slot, CallbackInfoReturnable<ItemStack> cir) {
         ItemStack curr = getStack(slot);
-        if (((ShadowItem) (Object) curr).isItShadowItem()) {
-            var shadowId = ((ShadowItem)(Object)curr).getShadowId();
-            Globals.removeInventory(shadowId, this, slot);
+        if (((ShadowItem) (Object) curr).getShadowId() != null) {
+            ((InventoryItem) (Object) curr).removeSlot((Inventory) this, slot);
         }
     }
 
     @Inject(method = "setStack", at = @At("HEAD"))
     public void track_set(int slot, ItemStack next, CallbackInfo ci) {
         ItemStack curr = getStack(slot);
-        if (((ShadowItem) (Object) curr).isItShadowItem()) {
-            var shadowId = ((ShadowItem)(Object)curr).getShadowId();
-            Globals.removeInventory(shadowId, this, slot);
+        if (((ShadowItem) (Object) curr).getShadowId() != null) {
+            ((InventoryItem) (Object) curr).removeSlot((Inventory) this, slot);
         }
-        if (((ShadowItem) (Object) next).isItShadowItem()) {
-            var shadowId = ((ShadowItem)(Object)next).getShadowId();
-            Globals.addInventory(shadowId, this, slot);
+        if (((ShadowItem) (Object) next).getShadowId() != null) {
+            ((InventoryItem) (Object) next).addSlot((Inventory) this, slot);
         }
     }
 }

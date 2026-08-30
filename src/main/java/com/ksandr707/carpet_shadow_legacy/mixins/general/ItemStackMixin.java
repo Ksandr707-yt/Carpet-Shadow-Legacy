@@ -1,40 +1,54 @@
 package com.ksandr707.carpet_shadow_legacy.mixins.general;
 
-import com.ksandr707.carpet_shadow_legacy.component.ShadowComponent;
-import com.ksandr707.carpet_shadow_legacy.component.ShadowNBTData;
 import com.ksandr707.carpet_shadow_legacy.interfaces.ShadowItem;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import org.spongepowered.asm.mixin.Mixin;
-
 
 @Mixin(ItemStack.class)
 public class ItemStackMixin implements ShadowItem {
 
     @Override
-    public boolean isItShadowItem() {
-        var shadowId = this.getShadowId();
-        return shadowId!=null && !shadowId.isEmpty() && shadowId.matches("\\S+?");
+    public boolean isShadowItem() {
+        String id = getShadowId();
+        return id != null && !id.isEmpty() && id.matches("\\S+?");
     }
 
     @Override
     public String getShadowId() {
-        if (!containsShadowComponent()) return null;
-        var component = ((ItemStack)(Object)this).getComponents().get(ShadowNBTData.SHADOW);
-        return component!=null ? component.shadowId() : null;
-    }
-
-    @Override
-    public boolean containsShadowComponent() {
-        return ((ItemStack)(Object)this).getComponents().contains(ShadowNBTData.SHADOW);
+        NbtComponent customData = ((ItemStack)(Object)this).get(DataComponentTypes.CUSTOM_DATA);
+        if (customData != null) {
+            NbtCompound tag = customData.copyNbt();
+            if (tag.contains(SHADOW_ID_KEY)) {
+                return tag.getString(SHADOW_ID_KEY);
+            }
+        }
+        return null;
     }
 
     @Override
     public void setShadowId(String id) {
-        ((ItemStack)(Object)this).set(ShadowNBTData.SHADOW, new ShadowComponent(id));
+        ItemStack stack = (ItemStack)(Object)this;
+        NbtComponent customData = stack.get(DataComponentTypes.CUSTOM_DATA);
+        NbtCompound tag = (customData != null) ? customData.copyNbt() : new NbtCompound();
+        tag.putString(SHADOW_ID_KEY, id);
+        stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
     }
 
     @Override
     public void removeShadow() {
-        ((ItemStack)(Object)this).remove(ShadowNBTData.SHADOW);
+        ItemStack stack = (ItemStack)(Object)this;
+        NbtComponent customData = stack.get(DataComponentTypes.CUSTOM_DATA);
+        if (customData != null) {
+            NbtCompound tag = customData.copyNbt();
+            tag.remove(SHADOW_ID_KEY);
+            if (tag.isEmpty()) {
+                stack.remove(DataComponentTypes.CUSTOM_DATA);
+            } else {
+                stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
+            }
+        }
     }
 }

@@ -1,30 +1,47 @@
 package com.ksandr707.carpet_shadow_legacy.mixins.inv_updates;
 
-import com.ksandr707.carpet_shadow_legacy.CarpetShadowLegacy;
 import com.ksandr707.carpet_shadow_legacy.CarpetShadowLegacySettings;
 import com.ksandr707.carpet_shadow_legacy.Globals;
-import com.ksandr707.carpet_shadow_legacy.interfaces.ShadowItem;
+import com.ksandr707.carpet_shadow_legacy.interfaces.InventoryItem;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 @Mixin(ItemStack.class)
-public abstract class ItemStackMixin {
+public abstract class ItemStackMixin implements InventoryItem {
+
+    @Unique
+    Set<Pair<Inventory,Integer>> slots = new HashSet<>();
+
+    @Override
+    public Collection<Inventory> getInventories() {
+        return slots.stream().map(Pair::getLeft).toList();
+    }
+
+    @Override
+    public void addSlot(Inventory inventory, int slot) {
+        slots.add(new ImmutablePair<>(inventory,slot));
+    }
+
+    @Override
+    public void removeSlot(Inventory inventory, int slot) {
+        slots.remove(new ImmutablePair<>(inventory, slot));
+    }
 
     @Inject(method = "setCount", at=@At("RETURN"))
     public void propagate_update(int count, CallbackInfo ci){
-        if (CarpetShadowLegacySettings.shadowItemUpdateFix &&
-                ((ShadowItem) this).isItShadowItem()) {
-            String shadowId = ((ShadowItem) this).getShadowId();
-            var cache = CarpetShadowLegacy.shadowMap.get(shadowId);
-
-            if (cache != null) {
-                for (var entry : cache.getRight()) {
-                    Globals.inventoriesToMarkDirty.add(entry.getLeft());
-                }
-            }
+        if (CarpetShadowLegacySettings.shadowItemUpdateFix) {
+            Globals.toUpdate.addAll(getInventories());
         }
     }
 }
